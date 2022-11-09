@@ -29,8 +29,10 @@ class MessagePassing:
         x_dash = tensor_manipulation.stack_rows([x, msg]).mean(axis = 0)
         return x_dash
 
-    def _default_aggregation(self):
-        return
+    def _default_aggregation(self, adj_list: list[int], fx_list: list[Tensor]):
+
+        msg = tensor_manipulation.stack_rows([fx_list[i] for i in adj_list])
+        return msg.mean(axis = 0)
 
     def _identity(x: Tensor) -> Tensor:
         """Internal function that returns the input tensor. 
