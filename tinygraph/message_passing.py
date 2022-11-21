@@ -18,7 +18,7 @@ class MessagePassing:
     def forward(self, X: list[Tensor], adj_lists: list[list[Tensor]]):
 
         fX = [self.message_func(x) for x in X]
-        Msg = [self.aggr_func(fX, i) for i,_ in enumerate(fX)]
+        Msg = [self.aggr_func(fX, adj_lists[i]) for i,_ in enumerate(fX)]
         X_dash = [self.propagation_func(X[i], Msg[i]) for i in range(len(X))]
         return X_dash
 
@@ -49,7 +49,7 @@ class MessagePassing:
         msg = tensor_manipulation.stack_rows([fx_list[i] for i in adj_list])
         return msg.sum(axis = 0)
 
-    def _identity(x: Tensor) -> Tensor:
+    def _identity(self, x: Tensor) -> Tensor:
         """Internal function that returns the input tensor. 
         Default message function if none is specified.
 
